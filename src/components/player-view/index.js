@@ -5,25 +5,15 @@ import Graph from 'components/graph'
 import './styles.scss'
 
 class PlayerView extends Component {
-  constructor(props) {
-    super(props)
-    const { players } = props
-    const selectedPlayerId = Object.keys(players)[0]
-    this.state = {
-      selectedPlayerId,
-    }
-  }
-
   handleSelectPlayer = e => {
-    this.setState({
-      selectedPlayerId: e.target.value,
-    })
+    const newPlayerId = e.target.value
+    this.props.history.push(`/players/${newPlayerId}`)
   }
 
   render() {
-    const { players } = this.props
-    const { selectedPlayerId } = this.state
-    const selectedPlayer = players[selectedPlayerId]
+    const { activePlayerId, players } = this.props
+    console.log('this.props', this.props)
+    const selectedPlayer = players[activePlayerId]
     const imageSrc = selectedPlayer.imageSrc.replace('https', 'http')
     console.log('imageSrc', imageSrc)
     console.log('selectedPlayer', selectedPlayer)
@@ -39,7 +29,7 @@ class PlayerView extends Component {
           <div className="player-select-container">
             <select
               name="Select a player"
-              value={selectedPlayerId}
+              value={activePlayerId}
               onChange={this.handleSelectPlayer}
             >
               {Object.values(players).map(player => {
@@ -53,7 +43,7 @@ class PlayerView extends Component {
           </div>
         </div>
         <div className="player-data-container">
-          <Graph games={players[selectedPlayerId].gameData} />
+          <Graph games={players[activePlayerId].gameData} />
         </div>
       </div>
     )

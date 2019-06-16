@@ -1,8 +1,15 @@
 import React, { Component } from 'react'
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from 'react-router-dom'
 
-import PlayerView from 'components/player-view'
 import Navbar from 'components/navbar'
+import PlayerRoute from 'routes/player'
 import { readData } from 'services/data'
+
 import './App.scss'
 
 class App extends Component {
@@ -20,7 +27,15 @@ class App extends Component {
       <div className="App">
         <Navbar />
         <div className="body">
-          <PlayerView players={appData.players} />
+          <Router>
+            <Switch>
+              <Route
+                path="/players/"
+                render={() => <PlayerRoute players={appData.players} />}
+              />
+              <Redirect to="/players" />
+            </Switch>
+          </Router>
         </div>
       </div>
     )

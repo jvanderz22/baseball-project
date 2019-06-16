@@ -1,0 +1,28 @@
+@import '~styles/variables';
+
+.player-view-container {
+}
+
+.player-data-container {
+  margin: 10px 30px;
+}
+
+.player-view-header {
+  display: flex;
+  margin: 0 30px;
+
+  & > * {
+    flex: 1;
+  }
+}
+
+.player-select-container {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-weight: $font-weight-bold;
+  font-size: $font-size-large;
+}
