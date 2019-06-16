@@ -1,0 +1,16 @@
+@import '~styles/variables';
+
+$body-padding: 30px;
+
+.App {
+  background-color: $yellow;
+  min-height: $app-height;
+  font-size: $font-size;
+}
+
+.body {
+  background-color: white;
+  margin: 0 $app-side-margin;
+  padding-top: $body-padding;
+  min-height: calc(#{$app-height} - #{$body-padding});
+}

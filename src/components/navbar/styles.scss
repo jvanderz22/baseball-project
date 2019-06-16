@@ -1,0 +1,15 @@
+@import '~styles/variables';
+
+.navbar {
+  background-color: $gray;
+  height: $navbar-height;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 $app-side-margin;
+}
+
+.navbar-header {
+  font-weight: $font-weight-bold;
+  font-size: $font-size-title;
+}
