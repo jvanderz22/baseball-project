@@ -1,0 +1,8 @@
+@import '~react-vis/dist/style';
+
+.rv-xy-plot {
+  overflow-x: visible;
+  .rv-xy-plot__inner {
+    overflow-x: visible;
+  }
+}

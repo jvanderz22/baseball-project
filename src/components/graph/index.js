@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react'
 
+import LineChart from 'components/line-chart'
+import { splitGamesByMonth } from 'services/data-operations'
 import {
   calculateOnBasePercentage,
   calculateBattingAverage,
@@ -10,16 +12,29 @@ type Props = {
 }
 
 class Graph extends PureComponent<Props> {
+  _getMonthlyData = () => {
+    const monthlyData = []
+    const gamesByMonth = splitGamesByMonth(this.props.games)
+    console.log('gamesByMonth', gamesByMonth)
+    for (const month of Object.keys(gamesByMonth)) {
+      console.log('month', month)
+      const games = gamesByMonth[month]
+      const battingAverage = calculateBattingAverage(games)
+      const onBasePercentage = calculateOnBasePercentage(games)
+      monthlyData.push({ x: new Date(month), y: battingAverage })
+    }
+    return monthlyData
+  }
+
   render() {
     const { games } = this.props
-    console.log('games', games)
-    const battingAverage = calculateBattingAverage(games)
-    const onBasePercentage = calculateOnBasePercentage(games)
-    console.log('onBasePercentage', onBasePercentage)
+    const gamesData = {}
+    const monthlyData = this._getMonthlyData()
+    console.log('monthlyData', monthlyData)
     return (
       <div>
         My Graph
-        <div>battingAverage: {battingAverage}</div>
+        <LineChart data={monthlyData} />
       </div>
     )
   }

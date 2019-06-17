@@ -1,4 +1,6 @@
 // @flow
+//
+import moment from 'moment'
 
 import dataset1 from 'datasets/mlb-543063.json'
 import dataset2 from 'datasets/mlb-547180.json'
@@ -125,25 +127,23 @@ export const readData = (): AppData => {
   const players = playerGameData.reduce((playerData, playerGameData) => {
     const game = playerGameData[0]
     const { id, fullName, imageSrc } = game
-    const gameData = playerGameData.map(playerGame => {
-      return {
-        gameDate: playerGame.gameDate,
-        team: playerGame.team,
-        teamImage: playerGame.teamImage,
-        opponent: playerGame.opponent,
-        opponentImage: playerGame.opponentImage,
-        plateAppearances: playerGame.plateAppearances,
-        atBats: playerGame.atBats,
-        hits: playerGame.hits,
-        homeRuns: playerGame.homeRuns,
-        walks: playerGame.walks,
-        strikeouts: playerGame.strikeouts,
-        hitByPitches: playerGame.hitByPitches,
-        sacFlies: playerGame.sacFlies,
-        totalBases: playerGame.totalBases,
-        rbi: playerGame.rbi,
-      }
-    })
+    const gameData = playerGameData.map(playerGame => ({
+      gameDate: moment(playerGame.gameDate),
+      team: playerGame.team,
+      teamImage: playerGame.teamImage,
+      opponent: playerGame.opponent,
+      opponentImage: playerGame.opponentImage,
+      plateAppearances: playerGame.plateAppearances,
+      atBats: playerGame.atBats,
+      hits: playerGame.hits,
+      homeRuns: playerGame.homeRuns,
+      walks: playerGame.walks,
+      strikeouts: playerGame.strikeouts,
+      hitByPitches: playerGame.hitByPitches,
+      sacFlies: playerGame.sacFlies,
+      totalBases: playerGame.totalBases,
+      rbi: playerGame.rbi,
+    }))
 
     playerData[id] = {
       id,
