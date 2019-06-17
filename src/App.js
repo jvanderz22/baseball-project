@@ -27,15 +27,17 @@ class App extends Component {
       <div className="App">
         <Navbar />
         <div className="body">
-          <Router>
-            <Switch>
-              <Route
-                path="/players/"
-                render={() => <PlayerRoute players={appData.players} />}
-              />
-              <Redirect to="/players" />
-            </Switch>
-          </Router>
+          <div className="content-container">
+            <Router>
+              <Switch>
+                <Route
+                  path="/players/"
+                  render={() => <PlayerRoute players={appData.players} />}
+                />
+                <Redirect to="/players" />
+              </Switch>
+            </Router>
+          </div>
         </div>
       </div>
     )

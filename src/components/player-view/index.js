@@ -1,22 +1,34 @@
 import React, { Component } from 'react'
 
+import PlayerTable from 'components/player-table'
 import Graph from 'components/graph'
 
 import './styles.scss'
 
 class PlayerView extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      displayValue: 'Graph',
+    }
+  }
+
   handleSelectPlayer = e => {
     const newPlayerId = e.target.value
     this.props.history.push(`/players/${newPlayerId}`)
   }
 
+  handleSelectView = e => {
+    this.setState({
+      displayValue: e.target.value,
+    })
+  }
+
   render() {
     const { activePlayerId, players } = this.props
-    console.log('this.props', this.props)
+    const { displayValue } = this.state
     const selectedPlayer = players[activePlayerId]
     const imageSrc = selectedPlayer.imageSrc.replace('https', 'http')
-    console.log('imageSrc', imageSrc)
-    console.log('selectedPlayer', selectedPlayer)
     return (
       <div className="player-view-container">
         <div className="player-view-header">
@@ -43,7 +55,38 @@ class PlayerView extends Component {
           </div>
         </div>
         <div className="player-data-container">
-          <Graph games={players[activePlayerId].gameData} />
+          <div className="player-data-display-options-container">
+            <div className="display-view-radio-container">
+              <button
+                className={
+                  'radio-button ' + (displayValue === 'Graph' ? 'active' : '')
+                }
+                value="Graph"
+                onClick={this.handleSelectView}
+                onKeyPress={this.handleSelectView}
+              >
+                Graph
+              </button>
+              <button
+                className={
+                  'radio-button ' + (displayValue === 'Table' ? 'active' : '')
+                }
+                value="Table"
+                onClick={this.handleSelectView}
+                onKeyPress={this.handleSelectView}
+              >
+                Table
+              </button>
+            </div>
+          </div>
+          <div className="display-container">
+            {displayValue === 'Graph' && (
+              <Graph games={players[activePlayerId].gameData} />
+            )}
+            {displayValue === 'Table' && (
+              <PlayerTable games={players[activePlayerId].gameData} />
+            )}
+          </div>
         </div>
       </div>
     )

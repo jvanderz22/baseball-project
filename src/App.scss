@@ -3,14 +3,19 @@
 $body-padding: 30px;
 
 .App {
-  background-color: $yellow;
   min-height: $app-height;
   font-size: $font-size;
 }
 
 .body {
+  display: flex;
+  justify-content: center;
+  background-color: lighten($gray, 10%);
+}
+
+.content-container {
   background-color: white;
-  margin: 0 $app-side-margin;
-  padding-top: $body-padding;
   min-height: calc(#{$app-height} - #{$body-padding});
+  padding-top: $body-padding;
+  flex-basis: 1000px;
 }

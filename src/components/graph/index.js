@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { PureComponent, Fragment } from 'react'
 
 import LineChart from 'components/line-chart'
 import { splitGamesByMonth } from 'services/data-operations'
@@ -30,12 +30,10 @@ class Graph extends PureComponent<Props> {
     const { games } = this.props
     const gamesData = {}
     const monthlyData = this._getMonthlyData()
-    console.log('monthlyData', monthlyData)
     return (
-      <div>
-        My Graph
+      <Fragment>
         <LineChart data={monthlyData} />
-      </div>
+      </Fragment>
     )
   }
 }

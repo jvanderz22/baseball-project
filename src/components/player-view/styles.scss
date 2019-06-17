@@ -1,15 +1,17 @@
 @import '~styles/variables';
 
+$side-margin: 30px;
+
 .player-view-container {
 }
 
 .player-data-container {
-  margin: 10px 30px;
+  margin-top: 10px;
 }
 
 .player-view-header {
   display: flex;
-  margin: 0 30px;
+  margin: 0 $side-margin;
 
   & > * {
     flex: 1;
@@ -25,4 +27,52 @@
 .player-name {
   font-weight: $font-weight-bold;
   font-size: $font-size-large;
+}
+
+.player-data-display-options-container {
+}
+
+.display-view-radio-container {
+  border-bottom: 1px solid gray;
+  padding: 0 $side-margin;
+}
+
+.radio-button {
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 0;
+  background-color: white;
+  border-bottom: none;
+  cursor: pointer;
+
+  &:first-child {
+    border-right: none;
+  }
+
+  &:hover {
+    background-color: $gray;
+  }
+
+  &.active {
+    background-color: $orange;
+
+    &:hover {
+      background-color: darken($orange, 2%);
+    }
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.display-container {
+  margin: 30px $side-margin 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

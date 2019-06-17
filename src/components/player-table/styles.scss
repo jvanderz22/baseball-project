@@ -1,0 +1,39 @@
+@import '~styles/variables';
+
+$table-border: 1px solid darken($gray, 10%);
+
+.player-data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  td,
+  th {
+    text-align: right;
+    padding: 3px;
+    border-left: $table-border;
+
+    &.month-table-data {
+      text-align: left;
+    }
+  }
+
+  thead {
+    tr {
+      background-color: darken($gray, 15%);
+    }
+  }
+
+  tr {
+    border-bottom: $table-border;
+    border-right: $table-border;
+    border-left: $table-border;
+
+    &:first-child {
+      border-top: $table-border;
+    }
+
+    &.total-data-row {
+      background-color: $gray;
+    }
+  }
+}

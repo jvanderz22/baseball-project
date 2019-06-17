@@ -1,16 +1,17 @@
 @import '~styles/variables';
 
 .navbar {
-  background-color: $gray;
+  background-color: $blue;
   height: $navbar-height;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 $app-side-margin;
-  border-bottom: 1px solid black;
+  padding: 0 30px;
+  border-bottom: 1px solid darken($gray, 15%);
 }
 
 .navbar-header {
+  color: white;
   font-weight: $font-weight-bold;
   font-size: $font-size-title;
 }
