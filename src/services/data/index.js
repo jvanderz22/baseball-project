@@ -1,10 +1,7 @@
 // @flow
-//
-import moment from 'moment'
 
-import dataset1 from 'datasets/mlb-543063.json'
-import dataset2 from 'datasets/mlb-547180.json'
-import dataset3 from 'datasets/mlb-605137.json'
+import moment from 'moment'
+import DATASETS from 'services/datasets'
 
 export type PlayerGameData = {
   id: string,
@@ -107,17 +104,17 @@ const readPlayerGameData = (headers, rows): PlayerGameData => {
   })
 }
 
-const DATASETS = [dataset1, dataset2, dataset3]
-
-type AppData = {
-  players: {
-    [playerId: string]: {
-      id: string,
-      fullName: string,
-      imageSrc: string,
-      gameData: Array<GameData>,
-    },
+export type PlayerData = {
+  [playerId: string]: {
+    id: string,
+    fullName: string,
+    imageSrc: string,
+    gameData: Array<GameData>,
   },
+}
+
+export type AppData = {
+  players: PlayerData,
 }
 
 export const readData = (): AppData => {
@@ -148,7 +145,7 @@ export const readData = (): AppData => {
     playerData[id] = {
       id,
       fullName,
-      imageSrc,
+      imageSrc: imageSrc.replace('https', 'http'),
       gameData,
     }
     return playerData

@@ -1,5 +1,8 @@
+// @flow
+
 import React, { PureComponent, Fragment } from 'react'
 
+import { type GameData } from 'services/data'
 import { splitGamesByMonth } from 'services/data-operations'
 import {
   calculateOnBasePercentage,

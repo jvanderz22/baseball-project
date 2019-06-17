@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react'
 import {
   XYPlot,
@@ -13,7 +15,11 @@ import ceil from 'lodash/ceil'
 
 import './styles.scss'
 
-function LineChart(props) {
+type Props = {
+  data: Object,
+}
+
+function LineChart(props: Props) {
   const { data } = props
   const maxYValue = maxBy(data, 'y').y
   const maxYRange = ceil(maxYValue, 1)

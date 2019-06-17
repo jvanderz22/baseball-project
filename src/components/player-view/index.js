@@ -1,26 +1,43 @@
+// @flow
+
 import React, { Component } from 'react'
 
+import PlayerGraph from 'components/player-graph'
 import PlayerTable from 'components/player-table'
-import Graph from 'components/graph'
+import { type PlayerData } from 'services/data'
 
 import './styles.scss'
 
-class PlayerView extends Component {
-  constructor(props) {
+type Props = {
+  players: PlayerData,
+  activePlayerId: string,
+  history: {
+    push: (newUrl: string) => void,
+  },
+}
+
+type State = {
+  displayValue: 'Graph' | 'Table',
+}
+
+class PlayerView extends Component<Props, State> {
+  constructor(props: Props) {
     super(props)
     this.state = {
       displayValue: 'Graph',
     }
   }
 
-  handleSelectPlayer = e => {
-    const newPlayerId = e.target.value
+  handleSelectPlayer = (e: SyntheticEvent<HTMLSelectElement>) => {
+    const newPlayerId = e.currentTarget.value
     this.props.history.push(`/players/${newPlayerId}`)
   }
 
-  handleSelectView = e => {
+  handleSelectView = (e: SyntheticEvent<HTMLButtonElement>) => {
+    const { value } = e.currentTarget
+
     this.setState({
-      displayValue: e.target.value,
+      displayValue: value,
     })
   }
 
@@ -28,14 +45,13 @@ class PlayerView extends Component {
     const { activePlayerId, players } = this.props
     const { displayValue } = this.state
     const selectedPlayer = players[activePlayerId]
-    const imageSrc = selectedPlayer.imageSrc.replace('https', 'http')
     return (
       <div className="player-view-container">
         <div className="player-view-header">
           <div className="player-info-container">
             <div className="player-name">{selectedPlayer.fullName}</div>
             <div>
-              <img src={imageSrc} alt="" />
+              <img src={selectedPlayer.imageSrc} alt="" />
             </div>
           </div>
           <div className="player-select-container">
@@ -44,9 +60,10 @@ class PlayerView extends Component {
               value={activePlayerId}
               onChange={this.handleSelectPlayer}
             >
-              {Object.values(players).map(player => {
+              {Object.keys(players).map(playerId => {
+                const player = players[playerId]
                 return (
-                  <option key={player.id} value={player.id}>
+                  <option key={playerId} value={playerId}>
                     {player.fullName}
                   </option>
                 )
@@ -81,7 +98,7 @@ class PlayerView extends Component {
           </div>
           <div className="display-container">
             {displayValue === 'Graph' && (
-              <Graph games={players[activePlayerId].gameData} />
+              <PlayerGraph games={players[activePlayerId].gameData} />
             )}
             {displayValue === 'Table' && (
               <PlayerTable games={players[activePlayerId].gameData} />

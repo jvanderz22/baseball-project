@@ -1,11 +1,16 @@
+// @flow
+
 import React, { PureComponent, Fragment } from 'react'
 
 import LineChart from 'components/line-chart'
+import { type GameData } from 'services/data'
 import { splitGamesByMonth } from 'services/data-operations'
 import {
   calculateOnBasePercentage,
   calculateBattingAverage,
 } from 'services/stat-calculations'
+
+import './styles.scss'
 
 type Props = {
   games: Array<GameData>,
@@ -31,9 +36,12 @@ class Graph extends PureComponent<Props> {
     const gamesData = {}
     const monthlyData = this._getMonthlyData()
     return (
-      <Fragment>
-        <LineChart data={monthlyData} />
-      </Fragment>
+      <div className="player-graph-container">
+        <div className="chart-container">
+          <LineChart data={monthlyData} />
+        </div>
+        <div className="options-container">Options</div>
+      </div>
     )
   }
 }

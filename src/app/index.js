@@ -1,3 +1,5 @@
+// @flow
+
 import React, { Component } from 'react'
 import {
   BrowserRouter as Router,
@@ -8,12 +10,17 @@ import {
 
 import Navbar from 'components/navbar'
 import PlayerRoute from 'routes/player'
-import { readData } from 'services/data'
+import { readData, type AppData } from 'services/data'
 
-import './App.scss'
+import './styles.scss'
 
-class App extends Component {
-  constructor(props) {
+type Props = {}
+type State = {
+  appData: AppData,
+}
+
+class App extends Component<Props, State> {
+  constructor(props: Props) {
     super(props)
     const appData = readData()
     this.state = {
