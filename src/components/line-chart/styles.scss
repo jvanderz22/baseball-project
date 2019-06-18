@@ -1,8 +1,138 @@
 @import '~react-vis/dist/style';
+@import '~styles/variables';
 
 .rv-xy-plot {
   overflow-x: visible;
   .rv-xy-plot__inner {
     overflow-x: visible;
   }
+}
+
+.line-chart-label {
+  text {
+    font-weight: $font-weight-bold;
+    font-size: $font-size;
+  }
+}
+
+.rv-crosshair {
+  .rv-crosshair__line {
+    background-color: $gray;
+  }
+}
+
+.crosshair {
+  background-color: black;
+  opacity: 0.85;
+  padding: 5px;
+  color: white;
+  width: 100px;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.line-chart-line-label {
+  text {
+    font-size: 13px;
+  }
+
+  &.blue {
+    text {
+      fill: $blue;
+    }
+  }
+
+  &.gray {
+    text {
+      fill: $gray;
+    }
+  }
+
+  &.orange {
+    text {
+      fill: $orange;
+    }
+  }
+
+  &.yellow {
+    text {
+      fill: $yellow;
+    }
+  }
+
+  &.lightblue {
+    text {
+      fill: lighten($blue, 30%);
+    }
+  }
+
+  &.darkblue {
+    text {
+      fill: darken($blue, 30%);
+    }
+  }
+
+  &.darkgray {
+    text {
+      fill: darken($gray, 30%);
+    }
+  }
+
+  &.darkorange {
+    text {
+      fill: darken($orange, 30%);
+    }
+  }
+
+  &.darkyellow {
+    text {
+      fill: darken($yellow, 30%);
+    }
+  }
+
+  &.bluegreen {
+    text {
+      fill: #1dbab4;
+    }
+  }
+  &.green {
+    text {
+      fill: #0c755b;
+    }
+  }
+
+  &.red {
+    text {
+      fill: #ff3a22;
+    }
+  }
+
+  &.yellowgreen {
+    text {
+      fill: #9cb700;
+    }
+  }
+
+  &.brown {
+    text {
+      fill: #9f8370;
+    }
+  }
+}
+
+:export {
+  blue: $blue;
+  gray: $gray;
+  orange: $orange;
+  yellow: $yellow;
+  lightblue: lighten($blue, 30%);
+  darkblue: darken($blue, 30%);
+  darkgray: darken($gray, 30%);
+  darkorange: darken($orange, 30%);
+  darkyellow: darken($yellow, 30%);
+  bluegreen: #1dbab4;
+  green: #0c755b;
+  red: #ff3a22;
+  yellowgreen: #9cb700;
+  brown: #9f8370;
 }

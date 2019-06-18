@@ -1,8 +1,45 @@
+@import '~styles/variables';
+
 .player-graph-container {
+  width: 100%;
+  display: flex;
 }
 
 .chart-container {
+  flex: 2;
 }
 
 .options-container {
+  flex: 1;
+}
+
+.graph-options-checkbox-container {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.graph-options-label {
+  font-weight: $font-weight-bold;
+  font-size: $font-size-large;
+  padding-bottom: 10px;
+}
+
+.graph-options-subsection-label {
+  font-weight: $font-weight-bold;
+  padding-bottom: 5px;
+}
+
+.graph-options-subsection-container {
+  padding: 15px;
+  border: 1px solid $blue;
+
+  &:last-child {
+    border-top: none;
+  }
+}
+
+.option-checkbox-container {
+  padding-right: 10px;
 }

@@ -36,3 +36,48 @@ export const calculateOPS = (games: Array<GameData>) => {
   const onBasePercentage = calculateOnBasePercentage(games)
   return sluggingPercentage + onBasePercentage
 }
+
+const sumRowByKey = key => games => sumRow(games, key)
+
+export const COMPUTED_DATA_FIELDS = {
+  AVG: 'AVG',
+  OBP: 'OBP',
+  SLG: 'SLG',
+  OPS: 'OPS',
+}
+
+export const COUNTING_DATA_FIELDS = {
+  PA: 'PA',
+  AB: 'AB',
+  H: 'H',
+  HR: 'HR',
+  BB: 'BB',
+  SO: 'SO',
+  HBP: 'HBP',
+  SF: 'SF',
+  TB: 'TB',
+  RBI: 'RBI',
+}
+
+export const DATA_FIELDS = {
+  ...COMPUTED_DATA_FIELDS,
+  ...COUNTING_DATA_FIELDS,
+}
+
+/* Maps a data key to a function to calculate it for a set of games */
+export const DATA_FIELD_FUNC_MAP = {
+  PA: sumRowByKey('plateAppearances'),
+  AB: sumRowByKey('atBats'),
+  H: sumRowByKey('hits'),
+  HR: sumRowByKey('homeRuns'),
+  SO: sumRowByKey('strikeouts'),
+  BB: sumRowByKey('walks'),
+  HBP: sumRowByKey('hitByPitches'),
+  SF: sumRowByKey('sacFlies'),
+  TB: sumRowByKey('totalBases'),
+  RBI: sumRowByKey('rbi'),
+  AVG: games => calculateBattingAverage(games).toFixed(3),
+  OBP: games => calculateOnBasePercentage(games).toFixed(3),
+  SLG: games => calculateSluggingPercentage(games).toFixed(3),
+  OPS: games => calculateOPS(games).toFixed(3),
+}
