@@ -24,7 +24,7 @@ class PlayerView extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      displayValue: 'Graph',
+      displayValue: 'Table',
     }
   }
 
@@ -77,16 +77,6 @@ class PlayerView extends Component<Props, State> {
             <div className="display-view-radio-container">
               <button
                 className={
-                  'radio-button ' + (displayValue === 'Graph' ? 'active' : '')
-                }
-                value="Graph"
-                onClick={this.handleSelectView}
-                onKeyPress={this.handleSelectView}
-              >
-                Graph
-              </button>
-              <button
-                className={
                   'radio-button ' + (displayValue === 'Table' ? 'active' : '')
                 }
                 value="Table"
@@ -94,6 +84,16 @@ class PlayerView extends Component<Props, State> {
                 onKeyPress={this.handleSelectView}
               >
                 Table
+              </button>
+              <button
+                className={
+                  'radio-button ' + (displayValue === 'Graph' ? 'active' : '')
+                }
+                value="Graph"
+                onClick={this.handleSelectView}
+                onKeyPress={this.handleSelectView}
+              >
+                Graph
               </button>
             </div>
           </div>
