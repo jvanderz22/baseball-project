@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, Fragment } from 'react'
+import React, { PureComponent } from 'react'
 import pickBy from 'lodash/pickBy'
 
 import Checkbox from 'components/checkbox'
@@ -19,15 +19,17 @@ type Props = {
   games: Array<GameData>,
 }
 
+type DataKey =
+  | $Keys<typeof COMPUTED_DATA_FIELDS>
+  | $Keys<typeof COUNTING_DATA_FIELDS>
+
 type State = {
   displayOptions: {
-    [option:
-      | $Keys<typeof COMPUTED_DATA_FIELDS>
-      | $Keys<typeof COUNTING_DATA_FIELDS>]: boolean,
+    [DataKey]: boolean,
   },
 }
 
-class Graph extends PureComponent<Props> {
+class Graph extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
@@ -37,7 +39,7 @@ class Graph extends PureComponent<Props> {
     }
   }
 
-  _getMonthlyData = () => {
+  _getMonthlyData = (): { [DataKey]: Array<{ x: Date, y: number }> } => {
     const { displayOptions } = this.state
     const activeDataFields = pickBy(displayOptions, option => option === true)
     const dataContainer = Object.keys(activeDataFields).reduce(
@@ -59,22 +61,22 @@ class Graph extends PureComponent<Props> {
         })
       }
     }
-    console.log('dataContainer', dataContainer)
     return dataContainer
   }
 
   handleOptionClick = (e: SyntheticEvent<HTMLInputElement>) => {
     const { dataField } = e.currentTarget.dataset
-    this.setState({
-      displayOptions: {
-        ...this.state.displayOptions,
-        [dataField]: !this.state.displayOptions[dataField],
-      },
-    })
+    if (COMPUTED_DATA_FIELDS[dataField] || COUNTING_DATA_FIELDS[dataField]) {
+      this.setState({
+        displayOptions: {
+          ...this.state.displayOptions,
+          [dataField]: !this.state.displayOptions[dataField],
+        },
+      })
+    }
   }
 
   render() {
-    const { games } = this.props
     const { displayOptions } = this.state
     const monthlyData = this._getMonthlyData()
     return (

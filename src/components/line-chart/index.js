@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component, Fragment } from 'react'
+import React, { PureComponent } from 'react'
 import moment from 'moment'
 import debounce from 'lodash/debounce'
 import {
@@ -8,14 +8,9 @@ import {
   ChartLabel,
   XYPlot,
   XAxis,
-  Hint,
   YAxis,
-  HorizontalGridLines,
-  VerticalGridLines,
   LineSeries,
   MarkSeries,
-  AxisUtils,
-  ScaleUtils,
 } from 'react-vis'
 import map from 'lodash/map'
 import max from 'lodash/max'
@@ -31,6 +26,19 @@ import styles from './styles.scss'
 
 type Props = {
   data: Object,
+}
+
+type CrosshairData = {
+  y: number,
+  x: number,
+  timeframe: string,
+  dataKey: string,
+  displayValue: string | number,
+}
+
+type State = {
+  crosshairValue: ?CrosshairData,
+  chartWidth: number,
 }
 
 const STAT_COLOR_MAP = {
@@ -50,50 +58,46 @@ const STAT_COLOR_MAP = {
   RBI: styles.brown,
 }
 
-const STAT_COLOR_CLASS_MAP = {
-  AVG: 'blue',
-  OBP: 'gray',
-  SLG: 'orange',
-  OPS: 'yellow',
-  PA: 'lightblue',
-  AB: 'green',
-  H: 'red',
-  HR: 'darkblue',
-  BB: 'darkgray',
-  SO: 'darkyellow',
-  HBP: 'darkorange',
-  SF: 'yellowgreen',
-  TB: 'bluegreen',
-  RBI: 'brown',
+const getComputedValueFromScaledValue = (computedValue, maxCountedValue) => {
+  return (computedValue / maxCountedValue / 3).toFixed(3)
 }
 
-const getComputedValueFromScaledValue = (computedValue, maxScaleValue) => {
-  return (computedValue / maxScaleValue / 3).toFixed(3)
-}
-
-class LineChart extends Component<Props> {
+class LineChart extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      crosshairValues: [],
+      crosshairValue: null,
+      chartWidth: 400,
     }
   }
 
-  handleMouseOverPoint = debounce(e => {
+  handleMouseOverPoint = debounce((activeCrosshair: CrosshairData) => {
     this.setState({
-      crosshairValues: [{ ...e }],
+      crosshairValue: activeCrosshair,
     })
   }, 150)
 
   handleMouseOutPoint = debounce(() => {
     this.setState({
-      crosshairValues: [],
+      crosshairValue: null,
     })
   }, 300)
 
+  setChartWidth = (element: ?HTMLDivElement) => {
+    if (element) {
+      const { offsetWidth } = element
+      const width = offsetWidth > 400 ? offsetWidth : 400
+      this.setState({
+        chartWidth: width,
+      })
+    }
+  }
+
   render() {
     const { data } = this.props
-    const { crosshairValues } = this.state
+    const { crosshairValue } = this.state
+
+    // Figure out the max Y values of the raw data passed to the component
     const countedYValues = Object.keys(data).reduce((arr, key) => {
       if (COUNTING_DATA_FIELDS[key]) {
         return arr.concat(map(data[key], 'y'))
@@ -112,7 +116,8 @@ class LineChart extends Component<Props> {
     const maxCountedValue = max(countedYValues) || 1 / 3
     let maxChartValue = maxCountedValue
 
-    const renderableData = Object.keys(data).reduce((obj, dataKey) => {
+    // Transform the given data into renderable values scaled to the chart
+    const transformedData = Object.keys(data).reduce((obj, dataKey) => {
       if (COMPUTED_DATA_FIELDS[dataKey]) {
         obj[dataKey] = data[dataKey].map(dataValue => {
           return { x: dataValue.x, y: dataValue.y * maxCountedValue * 3 }
@@ -126,157 +131,160 @@ class LineChart extends Component<Props> {
       return obj
     }, {})
 
-    for (const dataKey of Object.keys(renderableData)) {
-      const maxDataVal = maxBy(renderableData[dataKey], 'y').y
+    // Calculate the max Y value in the chart
+    for (const dataKey of Object.keys(transformedData)) {
+      const maxDataVal = maxBy(transformedData[dataKey], 'y').y
       if (maxDataVal > maxChartValue) {
         maxChartValue = maxDataVal
       }
     }
 
+    // Set the domain of the chart from 0 to the max value
     const yDomain = hasCountedValues
       ? [0, maxChartValue]
       : [0, ceil(maxComputedValue, 1)]
 
+    // Figure out which ticks to include on the computed axis
     const tickTotal = ceil(maxComputedValue, 1) / 0.1 + 1
-    let tickValues = []
+    let computedAxisTicks = []
     if (tickTotal > 0) {
-      tickValues = [...Array(ceil(tickTotal, 1)).keys()].map(index => {
+      computedAxisTicks = [...Array(ceil(tickTotal, 1)).keys()].map(index => {
         return index * 0.1 * maxCountedValue * 3
       })
     }
 
-    const usedCountingStats = Object.keys(renderableData).filter(
+    const transformedDataKeys = Object.keys(transformedData)
+    const usedCountingStats = transformedDataKeys.filter(
       dataKey => !!COUNTING_DATA_FIELDS[dataKey]
     )
-    const usedComputedStats = Object.keys(renderableData).filter(
+    const usedComputedStats = transformedDataKeys.filter(
       dataKey => !!COMPUTED_DATA_FIELDS[dataKey]
     )
     const countingStatsLabel = usedCountingStats.join(' / ')
     const computedStatsLabel = usedComputedStats.join(' / ')
-    return (
-      <XYPlot
-        width={675}
-        height={500}
-        xType="time"
-        yDomain={yDomain}
-        margin={{
-          left: 75,
-          top: 10,
-          right: 75,
-          bottom: 100,
-        }}
-      >
-        {Object.keys(renderableData).map(dataFieldLabel => {
-          const dataValues = renderableData[dataFieldLabel]
-          return (
-            <LineSeries
-              key={dataFieldLabel}
-              data={dataValues}
-              color={STAT_COLOR_MAP[dataFieldLabel]}
-            />
-          )
-        })}
-        {Object.keys(renderableData).map(dataFieldLabel => {
-          const dataValues = renderableData[dataFieldLabel]
-          let calculatedValue = data
-          const dataValuesWithLabel = dataValues.map(dataValue => ({
-            ...dataValue,
-            x: Number(dataValue.x),
-            timeframe: moment(dataValue.x).format('MMMM YYYY'),
-            dataFieldLabel,
-            displayValue: COMPUTED_DATA_FIELDS[dataFieldLabel]
-              ? getComputedValueFromScaledValue(dataValue.y, maxChartValue)
-              : dataValue.y,
-          }))
 
-          return (
-            <MarkSeries
-              key={dataFieldLabel}
-              data={dataValuesWithLabel}
-              size={5}
-              color={STAT_COLOR_MAP[dataFieldLabel]}
-              onValueMouseOver={this.handleMouseOverPoint}
-              onValueMouseOut={this.handleMouseOutPoint}
-            />
-          )
-        })}
-        {Object.keys(renderableData).map(dataFieldLabel => {
-          const dataValues = renderableData[dataFieldLabel]
-          const maxValue = maxBy(dataValues, 'y')
-          let yLocation = 1 - maxValue.y / yDomain[1]
-          if (yLocation < 0.05) {
-            yLocation = 0.05
-          }
-          return (
-            <ChartLabel
-              text={dataFieldLabel}
-              className={`line-chart-line-label ${STAT_COLOR_CLASS_MAP[dataFieldLabel]}`}
-              key={dataFieldLabel}
-              includeMargin={false}
-              xPercent={dataValues.indexOf(maxValue) / dataValues.length}
-              yPercent={yLocation}
-            />
-          )
-        })}
-        <XAxis />
-        {hasComputedValues && (
-          <YAxis
-            tickFormat={v => {
-              return getComputedValueFromScaledValue(v, maxCountedValue)
-            }}
-            tickValues={tickValues}
-          />
-        )}
-        <ChartLabel
-          text="Month"
-          className="line-chart-label"
-          includeMargin={false}
-          xPercent={0.45}
-          yPercent={1.2}
-        />
-        <Crosshair
-          values={this.state.crosshairValues}
-          style={{ color: 'black' }}
-          color="black"
+    return (
+      <div className="line-chart-container" ref={this.setChartWidth}>
+        <div className="chart-key-container">
+          {transformedDataKeys.map(dataKey => {
+            return (
+              <div className="chart-key" key={dataKey}>
+                <span
+                  style={{ backgroundColor: STAT_COLOR_MAP[dataKey] }}
+                  className="key-color"
+                >
+                  {' '}
+                </span>
+                {dataKey}
+              </div>
+            )
+          })}
+        </div>
+        <XYPlot
+          width={this.state.chartWidth}
+          height={500}
+          xType="time"
+          yDomain={yDomain}
+          margin={{
+            left: 75,
+            top: 10,
+            right: 75,
+            bottom: 100,
+          }}
         >
-          {crosshairValues.length > 0 && (
-            <div className="crosshair">
-              <div>{crosshairValues[0].timeframe}</div>
-              <div>{crosshairValues[0].dataFieldLabel}</div>
-              <div>{crosshairValues[0].displayValue}</div>
-            </div>
+          {transformedDataKeys.map(dataKey => {
+            const dataValues = transformedData[dataKey]
+            return (
+              <LineSeries
+                key={dataKey}
+                data={dataValues}
+                color={STAT_COLOR_MAP[dataKey]}
+              />
+            )
+          })}
+          {Object.keys(transformedData).map(dataKey => {
+            const dataValues = transformedData[dataKey]
+            const dataValuesWithLabel = dataValues.map(dataValue => ({
+              ...dataValue,
+              x: Number(dataValue.x),
+              timeframe: moment(dataValue.x).format('MMMM YYYY'),
+              dataKey,
+              displayValue: COMPUTED_DATA_FIELDS[dataKey]
+                ? getComputedValueFromScaledValue(dataValue.y, maxCountedValue)
+                : dataValue.y,
+            }))
+
+            return (
+              <MarkSeries
+                key={dataKey}
+                data={dataValuesWithLabel}
+                size={5}
+                color={STAT_COLOR_MAP[dataKey]}
+                onValueMouseOver={this.handleMouseOverPoint}
+                onValueMouseOut={this.handleMouseOutPoint}
+              />
+            )
+          })}
+          <XAxis />
+          {hasComputedValues && (
+            <YAxis
+              tickFormat={v => {
+                return getComputedValueFromScaledValue(v, maxCountedValue)
+              }}
+              tickValues={computedAxisTicks}
+            />
           )}
-        </Crosshair>
-        {hasComputedValues && (
           <ChartLabel
-            text={computedStatsLabel}
+            text="Month"
             className="line-chart-label"
             includeMargin={false}
-            xPercent={-0.11}
-            yPercent={0.5 - computedStatsLabel.length * 0.0075}
-            style={{
-              transform: 'rotate(-90)',
-              textAnchor: 'end',
-            }}
+            xPercent={0.45}
+            yPercent={1.2}
           />
-        )}
-        {hasCountedValues && (
-          <ChartLabel
-            text={countingStatsLabel}
-            className="line-chart-label"
-            includeMargin={false}
-            xPercent={hasComputedValues ? 1.11 : -0.11}
-            yPercent={0.5 - countingStatsLabel.length * 0.0075}
-            style={{
-              transform: 'rotate(-90)',
-              textAnchor: 'end',
-            }}
-          />
-        )}
-        {hasCountedValues && (
-          <YAxis orientation={hasComputedValues ? 'right' : 'left'} />
-        )}
-      </XYPlot>
+          <Crosshair
+            values={[crosshairValue]}
+            style={{ color: 'black' }}
+            color="black"
+          >
+            {crosshairValue && (
+              <div className="crosshair">
+                <div>{crosshairValue.timeframe}</div>
+                <div>{crosshairValue.dataKey}</div>
+                <div>{crosshairValue.displayValue}</div>
+              </div>
+            )}
+          </Crosshair>
+          {hasComputedValues && (
+            <ChartLabel
+              text={computedStatsLabel}
+              className="line-chart-label"
+              includeMargin={false}
+              xPercent={-0.11}
+              yPercent={0.5 - computedStatsLabel.length * 0.0075}
+              style={{
+                transform: 'rotate(-90)',
+                textAnchor: 'end',
+              }}
+            />
+          )}
+          {hasCountedValues && (
+            <ChartLabel
+              text={countingStatsLabel}
+              className="line-chart-label"
+              includeMargin={false}
+              xPercent={hasComputedValues ? 1.11 : -0.11}
+              yPercent={0.5 - countingStatsLabel.length * 0.0075}
+              style={{
+                transform: 'rotate(-90)',
+                textAnchor: 'end',
+              }}
+            />
+          )}
+          {hasCountedValues && (
+            <YAxis orientation={hasComputedValues ? 'right' : 'left'} />
+          )}
+        </XYPlot>
+      </div>
     )
   }
 }

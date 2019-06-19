@@ -17,7 +17,7 @@
 
 .rv-crosshair {
   .rv-crosshair__line {
-    background-color: $gray;
+    background-color: black;
   }
 }
 
@@ -31,93 +31,30 @@
   font-family: sans-serif;
 }
 
-.line-chart-line-label {
-  text {
-    font-size: 13px;
-  }
+.chart-key-container {
+  max-width: 350px;
+  display: flex;
+  align-self: center;
+  justify-self: center;
+  flex-wrap: wrap;
 
-  &.blue {
-    text {
-      fill: $blue;
-    }
-  }
+  .chart-key {
+    margin-right: 10px;
+    margin-bottom: 10px;
 
-  &.gray {
-    text {
-      fill: $gray;
+    .key-color {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      margin-right: 5px;
     }
   }
+}
 
-  &.orange {
-    text {
-      fill: $orange;
-    }
-  }
-
-  &.yellow {
-    text {
-      fill: $yellow;
-    }
-  }
-
-  &.lightblue {
-    text {
-      fill: lighten($blue, 30%);
-    }
-  }
-
-  &.darkblue {
-    text {
-      fill: darken($blue, 30%);
-    }
-  }
-
-  &.darkgray {
-    text {
-      fill: darken($gray, 30%);
-    }
-  }
-
-  &.darkorange {
-    text {
-      fill: darken($orange, 30%);
-    }
-  }
-
-  &.darkyellow {
-    text {
-      fill: darken($yellow, 30%);
-    }
-  }
-
-  &.bluegreen {
-    text {
-      fill: #1dbab4;
-    }
-  }
-  &.green {
-    text {
-      fill: #0c755b;
-    }
-  }
-
-  &.red {
-    text {
-      fill: #ff3a22;
-    }
-  }
-
-  &.yellowgreen {
-    text {
-      fill: #9cb700;
-    }
-  }
-
-  &.brown {
-    text {
-      fill: #9f8370;
-    }
-  }
+.line-chart-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 :export {

@@ -6,11 +6,11 @@
 }
 
 .chart-container {
-  flex: 2;
+  flex: 1;
 }
 
-.options-container {
-  flex: 1;
+.graph-options-container {
+  flex-basis: 200px;
 }
 
 .graph-options-checkbox-container {

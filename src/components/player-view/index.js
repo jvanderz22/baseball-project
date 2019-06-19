@@ -35,10 +35,11 @@ class PlayerView extends Component<Props, State> {
 
   handleSelectView = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { value } = e.currentTarget
-
-    this.setState({
-      displayValue: value,
-    })
+    if (value === 'Graph' || value === 'Table') {
+      this.setState({
+        displayValue: value,
+      })
+    }
   }
 
   render() {
