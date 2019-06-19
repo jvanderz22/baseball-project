@@ -162,11 +162,14 @@ class LineChart extends PureComponent<Props, State> {
     )
     const countingStatsLabel = usedCountingStats.join(' / ')
     const computedStatsLabel = usedComputedStats.join(' / ')
+    const chartKeys = Object.keys(COMPUTED_DATA_FIELDS)
+      .concat(Object.keys(COUNTING_DATA_FIELDS))
+      .filter(dataKey => !!transformedData[dataKey])
 
     return (
       <div className="line-chart-container" ref={this.setChartWidth}>
         <div className="chart-key-container">
-          {transformedDataKeys.map(dataKey => {
+          {chartKeys.map(dataKey => {
             return (
               <div className="chart-key" key={dataKey}>
                 <span
