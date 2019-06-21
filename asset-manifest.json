@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/baseball-project/static/css/main.b0ed1945.chunk.css",
+    "main.js": "/baseball-project/static/js/main.f0b86a27.chunk.js",
+    "main.js.map": "/baseball-project/static/js/main.f0b86a27.chunk.js.map",
+    "runtime~main.js": "/baseball-project/static/js/runtime~main.4a24f26b.js",
+    "runtime~main.js.map": "/baseball-project/static/js/runtime~main.4a24f26b.js.map",
+    "static/js/2.e3123218.chunk.js": "/baseball-project/static/js/2.e3123218.chunk.js",
+    "static/js/2.e3123218.chunk.js.map": "/baseball-project/static/js/2.e3123218.chunk.js.map",
+    "index.html": "/baseball-project/index.html",
+    "precache-manifest.d2755f78a25b0ba034cc267974749275.js": "/baseball-project/precache-manifest.d2755f78a25b0ba034cc267974749275.js",
+    "service-worker.js": "/baseball-project/service-worker.js",
+    "static/css/main.b0ed1945.chunk.css.map": "/baseball-project/static/css/main.b0ed1945.chunk.css.map"
+  }
+}
